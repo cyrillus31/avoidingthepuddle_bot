@@ -50,9 +50,9 @@ async def send_status(message):
 
 
 async def cheking_yutube():
+    result1 = await new_video_check(link)
+    task1 = asyncio.create_task(mypolling())
     while True:
-        task1 = asyncio.create_task(new_video_check(link))
-        result1 = await task1
         if result1:
             with open ("users.txt", "r") as f:
                 list_of_users = f.read().split(", ")[:-1]
@@ -62,12 +62,14 @@ async def cheking_yutube():
                 await bot.send_message(int(user_id), "NEW VIDEO:\n{}".format(latest_video_url))
         else:
             print("this is noto working")
-        await asyncio.sleep(3000)
+            await bot.send_message(mychat_id, "this is not working")
+        await asyncio.sleep(5)
+
+async def mypolling():
+    await bot.polling()
+
+
+asyncio.run (cheking_yutube())
 
 
 
-
-
-
-
-asyncio.run(bot.polling())
