@@ -1,7 +1,11 @@
 from telebot.async_telebot import AsyncTeleBot 
 import pytube
-import time
+import logging
 import asyncio
+
+# let's initiate the logging 
+logging.basicConfig(filename='atp_bot.log', level=logging.DEBUG,
+                    format='%(asctime)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
 
 # Let's start working with PyTelegramBotAPI
 
@@ -30,13 +34,13 @@ async def new_video_check():
     with open("latest_video.txt", "r") as f:
         latest_vid = f.read()
     if link == latest_vid:
-        print ("There are no new videos")
+        logging.debug("There are no new videos")
         return False
     else:
-        print ("New video found")
+        logging.debug("New video found")
         with open ("latest_video.txt", "w") as f:
             f.write(link)
-        print ("Link updated")
+        logging.debug("Link updated")
         return True
 
 #let's create how bot will send a message
@@ -59,19 +63,23 @@ async def cheking_yutube():
     task1 = asyncio.create_task(mypolling())
     #result1 = await task2
     while True:
+        logging.debug('starting the main event loop')
         with open ("users.txt", "r") as f:
             list_of_users = f.read().split(", ")[:-1]
         print (list_of_users)
         task2 = asyncio.create_task(new_video_check())
         result = await task2
-        print (result)
+        logging.debug(result)
         if result:
+            logging.debug("there's a new video so it is going to be sent to everyone")
             for user_id in list_of_users:
+                logging.debut(f"sending updated link to the user {user_id}")
                 await bot.send_message(int(user_id), "NEW VIDEO:\n{}".format(latest_video_url))
         else:
-            print("There's no new video")
+            logging.debug("There's no new video afterall")
            #  for user_id in list_of_users:
            #      await bot.send_message(user_id, "There's no new video")
+        logging.debug('going to sleep for 2500 seconds')
         await asyncio.sleep(2500)
 
 async def mypolling():
