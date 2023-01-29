@@ -3,6 +3,8 @@ import pytube
 import time
 import asyncio
 
+from db import add_row
+
 # Let's start working with PyTelegramBotAPI
 
 with open("token.txt", "r") as file:
@@ -70,11 +72,13 @@ async def cheking_yutube():
         if result:
             for user_id in list_of_users:
                 await bot.send_message(int(user_id), "NEW VIDEO:\n{}".format(latest_video_url))
+                add_row(latest_video_url)
+                await bot.send_message(int(user_id), "The video was added to the database")
         else:
             print("There's no new video")
            #  for user_id in list_of_users:
            #      await bot.send_message(user_id, "There's no new video")
-        await asyncio.sleep(2500)
+        await asyncio.sleep(10)
 
 async def mypolling():
     await bot.polling(non_stop=True, request_timeout=300)
