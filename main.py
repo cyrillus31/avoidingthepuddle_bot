@@ -2,10 +2,10 @@ from telebot.async_telebot import AsyncTeleBot
 import pytube
 import time
 import asyncio
+import os
 
 # Let's start working with PyTelegramBotAPI
-with open("token.txt", "r") as file:
-    token = file.read() 
+token = os.getenv("ATP_TELEBOT_TOKEN")
 bot = AsyncTeleBot(token)
 
 latest_video_url=""
@@ -39,7 +39,7 @@ async def new_video_check():
         print ("Link updated")
         return True
 
-#let's create how bot will send a message
+#bot is sending a message
 
 @bot.message_handler(commands=["status", "start"])
 async def send_status(message):
